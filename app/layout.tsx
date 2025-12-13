@@ -51,6 +51,9 @@ export default function RootLayout({
           src="https://cdn.jsdelivr.net/npm/videojs-contrib-eme@3.11.0/dist/videojs-contrib-eme.min.js" 
           strategy="beforeInteractive" 
         />
+        <div className="fixed bottom-2 right-2 text-xs text-green-400 pointer-events-none z-50 font-mono">
+          v0.0.1
+        </div>
       </body>
     </html>
   );

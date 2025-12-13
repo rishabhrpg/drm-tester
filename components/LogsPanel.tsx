@@ -11,9 +11,10 @@ interface LogsPanelProps {
   logs: LogEntry[];
   currentUrl: string;
   currentDrmTech: string;
+  isFocused?: boolean;
 }
 
-const LogsPanel: React.FC<LogsPanelProps> = ({ logs, currentUrl, currentDrmTech }) => {
+const LogsPanel: React.FC<LogsPanelProps> = ({ logs, currentUrl, currentDrmTech, isFocused = false }) => {
   const logsEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -23,20 +24,6 @@ const LogsPanel: React.FC<LogsPanelProps> = ({ logs, currentUrl, currentDrmTech 
   useEffect(() => {
     scrollToBottom();
   }, [logs]);
-
-  const getLogColor = (type: string) => {
-    switch (type) {
-      case 'error':
-        return '#ff4444';
-      case 'success':
-        return '#44ff44';
-      case 'event':
-        return '#ffaa00';
-      case 'info':
-      default:
-        return '#00aaff';
-    }
-  };
 
   const getLogIcon = (type: string) => {
     switch (type) {
@@ -63,36 +50,45 @@ const LogsPanel: React.FC<LogsPanelProps> = ({ logs, currentUrl, currentDrmTech 
   };
 
   return (
-    <div className="logs-panel" style={{ height: '100%', display: 'flex', flexDirection: 'column', textAlign: 'left' }}>
+    <div className="logs-panel" style={{ height: '100%', display: 'flex', flexDirection: 'column', position: 'relative' }}>
+      {isFocused && (
+        <div style={{
+          position: 'absolute',
+          top: '10px',
+          right: '10px',
+          backgroundColor: 'rgba(0, 0, 0, 0.7)',
+          color: '#3b82f6',
+          padding: '8px 12px',
+          borderRadius: '4px',
+          fontSize: '12px',
+          pointerEvents: 'none',
+          zIndex: 1000
+        }}>
+          Logs Panel Focused | ↑: Back to Player
+        </div>
+      )}
       {/* Status Bar */}
-      <div className="status-bar" style={{
-        padding: '10px 20px',
-        backgroundColor: '#2a2a2a',
-        borderBottom: '1px solid #444',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center'
-      }}>
+      <div className="logs-header">
         <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-          <h3 style={{ margin: 0, color: '#00aaff' }}>Player Logs</h3>
-          <span style={{ fontSize: '12px', color: '#888' }}>
+          <h3 className="logs-title">Player Logs</h3>
+          <span className="logs-meta">
             Total: {logs.length} entries
           </span>
         </div>
         
-        <div style={{ display: 'flex', gap: '20px', fontSize: '14px' }}>
+        <div className="logs-meta" style={{ display: 'flex', gap: '20px' }}>
           {currentUrl && (
             <div>
-              <span style={{ color: '#888' }}>URL: </span>
-              <span style={{ color: '#00aaff', fontFamily: 'monospace' }}>
+              <span>URL: </span>
+              <span style={{ color: 'var(--primary)' }}>
                 {currentUrl.length > 50 ? `...${currentUrl.slice(-50)}` : currentUrl}
               </span>
             </div>
           )}
           {currentDrmTech && (
             <div>
-              <span style={{ color: '#888' }}>DRM: </span>
-              <span style={{ color: '#44ff44', fontWeight: 'bold' }}>
+              <span>DRM: </span>
+              <span style={{ color: 'var(--success)', fontWeight: 'bold' }}>
                 {currentDrmTech}
               </span>
             </div>
@@ -101,26 +97,15 @@ const LogsPanel: React.FC<LogsPanelProps> = ({ logs, currentUrl, currentDrmTech 
       </div>
 
       {/* Logs Container */}
-      <div 
-        className="logs-container" 
-        style={{
-          flex: 1,
-          overflowY: 'auto',
-          padding: '10px',
-          backgroundColor: '#1a1a1a',
-          fontFamily: 'monospace',
-          fontSize: '13px',
-          lineHeight: '1.4'
-        }}
-      >
+      <div className="logs-content">
         {logs.length === 0 ? (
           <div style={{ 
             display: 'flex', 
             alignItems: 'center', 
             justifyContent: 'center', 
             height: '100%', 
-            color: '#666',
-            fontSize: '16px'
+            color: 'var(--text-muted)',
+            fontSize: '1rem'
           }}>
             No logs yet. Start playing content to see events...
           </div>
@@ -128,35 +113,26 @@ const LogsPanel: React.FC<LogsPanelProps> = ({ logs, currentUrl, currentDrmTech 
           logs.map((log, index) => (
             <div
               key={index}
-              className="log-entry"
-              style={{
-                padding: '6px 10px',
-                marginBottom: '2px',
-                borderRadius: '3px',
-                backgroundColor: index % 2 === 0 ? '#222' : '#1a1a1a',
-                borderLeft: `3px solid ${getLogColor(log.type)}`,
-                display: 'flex',
-                alignItems: 'flex-start',
-                gap: '8px'
-              }}
+              className={`log-entry ${log.type}`}
             >
-              <span style={{ fontSize: '14px' }}>{getLogIcon(log.type)}</span>
-              <div style={{ flex: 1 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '2px' }}>
-                  <span style={{ color: '#888', fontSize: '11px' }}>
-                    {formatTimestamp(log.timestamp)}
-                  </span>
-                  <span style={{ 
-                    color: getLogColor(log.type), 
-                    fontSize: '11px', 
-                    fontWeight: 'bold',
-                    textTransform: 'uppercase'
-                  }}>
-                    {log.type}
-                  </span>
-                </div>
-                <div style={{ color: '#fff', wordBreak: 'break-all' }}>
-                  {log.message}
+              <div style={{ display: 'flex', alignItems: 'flex-start' }}>
+                <span style={{ marginRight: '8px', fontSize: '1rem' }}>{getLogIcon(log.type)}</span>
+                <div style={{ flex: 1 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', marginBottom: '2px' }}>
+                    <span className="log-timestamp">
+                      {formatTimestamp(log.timestamp)}
+                    </span>
+                    <span className="log-type" style={{ 
+                      color: log.type === 'error' ? 'var(--error)' : 
+                             log.type === 'success' ? 'var(--success)' : 
+                             log.type === 'event' ? 'var(--warning)' : 'var(--primary)' 
+                    }}>
+                      {log.type}
+                    </span>
+                  </div>
+                  <div className="log-message">
+                    {log.message}
+                  </div>
                 </div>
               </div>
             </div>
@@ -168,11 +144,12 @@ const LogsPanel: React.FC<LogsPanelProps> = ({ logs, currentUrl, currentDrmTech 
       {/* Footer */}
       <div style={{
         padding: '8px 20px',
-        backgroundColor: '#2a2a2a',
-        borderTop: '1px solid #444',
-        fontSize: '12px',
-        color: '#888',
-        textAlign: 'center'
+        backgroundColor: 'rgba(0,0,0,0.2)',
+        borderTop: '1px solid var(--panel-border)',
+        fontSize: '0.75rem',
+        color: 'var(--text-muted)',
+        textAlign: 'center',
+        fontFamily: 'var(--font-sans)'
       }}>
         Auto-scroll enabled • Real-time player events and DRM status
       </div>
@@ -181,4 +158,3 @@ const LogsPanel: React.FC<LogsPanelProps> = ({ logs, currentUrl, currentDrmTech 
 };
 
 export default LogsPanel;
-

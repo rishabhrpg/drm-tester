@@ -25,7 +25,10 @@ export default function Home() {
   const [currentPage, setCurrentPage] = useState('player'); // 'player' or 'drm-info'
   const playerRef = useRef<VideoPlayerHandle>(null);
 
-  const addLog = (message: string, type: 'info' | 'error' | 'success' | 'event' = 'info') => {
+  const addLog = (
+    message: string,
+    type: 'info' | 'error' | 'success' | 'event' = 'info'
+  ) => {
     const timestamp = new Date().toISOString();
     setLogs((prev) => [...prev, { timestamp, message, type }]);
   };
@@ -71,6 +74,15 @@ export default function Home() {
     addLog(`Player Event: ${eventType} - ${JSON.stringify(data)}`, 'event');
   };
 
+  const stopPlayback = () => {
+    if (playerRef.current) {
+      playerRef.current.stop();
+    }
+    setCurrentUrl('');
+    setCurrentDrmTech('');
+    addLog('Playback stopped and player reset', 'info');
+  };
+
   // Render DRM Info page
   if (currentPage === 'drm-info') {
     return <DrmInfo onBack={() => setCurrentPage('player')} />;
@@ -81,12 +93,10 @@ export default function Home() {
     <div className='App'>
       <div className='app-container'>
         <div className='left-panel'>
-          <h1>Test 4</h1>
           <ControlPanel
             onPlayDash={playDashContent}
             onPlayDrmDash={playDrmDashContent}
-            drmType={drmType}
-            onDrmTypeChange={setDrmType}
+            onStop={stopPlayback}
             onShowDrmInfo={() => setCurrentPage('drm-info')}
           />
         </div>
@@ -108,4 +118,3 @@ export default function Home() {
     </div>
   );
 }
-

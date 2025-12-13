@@ -1,41 +1,48 @@
 .drm-info-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+  background: var(--background);
   padding: 30px;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+  font-family: var(--font-sans);
+  color: var(--foreground);
 }
 
 .back-button {
-  background: #4a5568;
-  color: white;
-  border: none;
+  background: var(--panel-bg);
+  color: var(--foreground);
+  border: 1px solid var(--panel-border);
   padding: 10px 20px;
   border-radius: 8px;
   cursor: pointer;
   font-size: 14px;
   font-weight: 500;
   margin-bottom: 20px;
-  transition: background-color 0.2s ease;
+  transition: all 0.2s ease;
   outline: none;
+  font-family: var(--font-sans);
 }
 
 .back-button:hover {
-  background: #2d3748;
+  background: var(--primary);
+  border-color: var(--primary);
+  color: white;
+  transform: translateY(-1px);
 }
 
 .back-button:focus {
-  outline: 4px solid #4299e1;
+  outline: 2px solid var(--primary);
   outline-offset: 2px;
-  background: #2d3748;
+  background: var(--primary);
+  color: white;
 }
 
 /* Info Cards */
 .info-card {
-  background: white;
+  background: var(--panel-bg);
   border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   margin-bottom: 20px;
   overflow: hidden;
+  border: 1px solid var(--panel-border);
 }
 
 .card-header {
@@ -43,7 +50,8 @@
   align-items: center;
   gap: 12px;
   padding: 20px 24px;
-  border-bottom: 1px solid #edf2f7;
+  border-bottom: 1px solid var(--panel-border);
+  background: rgba(0, 0, 0, 0.2);
 }
 
 .card-icon {
@@ -52,9 +60,9 @@
 
 .card-header h2 {
   margin: 0;
-  font-size: 20px;
+  font-size: 1.25rem;
   font-weight: 600;
-  color: #1a202c;
+  color: var(--foreground);
 }
 
 .card-content {
@@ -63,7 +71,7 @@
 
 /* System Info Card */
 .system-info-card {
-  border-left: 4px solid #4299e1;
+  border-left: 4px solid var(--primary);
 }
 
 .system-info-grid {
@@ -80,14 +88,14 @@
 }
 
 .info-label {
-  font-size: 13px;
-  color: #718096;
+  font-size: 0.875rem;
+  color: var(--text-muted);
   font-weight: 500;
 }
 
 .info-value {
-  font-size: 16px;
-  color: #1a202c;
+  font-size: 1rem;
+  color: var(--foreground);
   font-weight: 600;
 }
 
@@ -119,40 +127,35 @@
   padding-bottom: 10px;
 }
 
-.widevine-icon {
-  color: #48bb78;
-}
-
-.playready-icon {
-  color: #ed8936;
-}
-
-.fairplay-icon {
-  color: #ed8936;
-}
+.widevine-icon { color: var(--success); }
+.playready-icon { color: var(--warning); }
+.fairplay-icon { color: var(--warning); }
 
 /* Status Badge */
 .status-badge {
   display: inline-block;
   padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 13px;
+  border-radius: 9999px;
+  font-size: 0.8rem;
   font-weight: 600;
 }
 
 .status-supported {
-  background-color: #c6f6d5;
-  color: #22543d;
+  background-color: rgba(34, 197, 94, 0.1);
+  color: var(--success);
+  border: 1px solid rgba(34, 197, 94, 0.2);
 }
 
 .status-not-supported {
-  background-color: #fed7d7;
-  color: #c53030;
+  background-color: rgba(245, 158, 11, 0.1);
+  color: var(--warning);
+  border: 1px solid rgba(245, 158, 11, 0.2);
 }
 
 .status-checking {
-  background-color: #e2e8f0;
-  color: #4a5568;
+  background-color: rgba(148, 163, 184, 0.1);
+  color: var(--text-muted);
+  border: 1px solid rgba(148, 163, 184, 0.2);
 }
 
 /* DRM Info Rows */
@@ -164,8 +167,8 @@
 }
 
 .status-label {
-  font-size: 14px;
-  color: #4a5568;
+  font-size: 0.875rem;
+  color: var(--text-muted);
   font-weight: 500;
 }
 
@@ -182,8 +185,8 @@
 
 .section-label {
   display: block;
-  font-size: 13px;
-  color: #718096;
+  font-size: 0.8rem;
+  color: var(--text-muted);
   font-weight: 500;
   margin-bottom: 8px;
 }
@@ -199,32 +202,33 @@
   display: inline-block;
   padding: 4px 12px;
   border-radius: 6px;
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: 500;
   border: 1px solid transparent;
 }
 
 .tag-default {
-  background-color: #e2e8f0;
-  color: #4a5568;
+  background-color: rgba(148, 163, 184, 0.1);
+  color: var(--text-muted);
+  border-color: var(--panel-border);
 }
 
 .tag-blue {
-  background-color: #ebf8ff;
-  color: #2b6cb0;
-  border-color: #bee3f8;
+  background-color: rgba(59, 130, 246, 0.1);
+  color: var(--primary);
+  border-color: rgba(59, 130, 246, 0.2);
 }
 
 .tag-green {
-  background-color: #f0fff4;
-  color: #276749;
-  border-color: #c6f6d5;
+  background-color: rgba(34, 197, 94, 0.1);
+  color: var(--success);
+  border-color: rgba(34, 197, 94, 0.2);
 }
 
 .tag-purple {
-  background-color: #faf5ff;
-  color: #6b46c1;
-  border-color: #e9d8fd;
+  background-color: rgba(139, 92, 246, 0.1);
+  color: #a78bfa;
+  border-color: rgba(139, 92, 246, 0.2);
 }
 
 /* External Link Section */
@@ -236,32 +240,31 @@
 
 .external-link {
   display: inline-block;
-  color: #4299e1;
-  font-size: 16px;
+  color: var(--primary);
+  font-size: 1rem;
   font-weight: 600;
   text-decoration: none;
   padding: 12px 24px;
-  border: 2px solid #4299e1;
+  border: 1px solid var(--primary);
   border-radius: 8px;
   transition: all 0.2s ease;
-  background: white;
+  background: transparent;
   outline: none;
 }
 
 .external-link:hover {
-  background: #4299e1;
+  background: var(--primary);
   color: white;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(66, 153, 225, 0.3);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
 .external-link:focus {
-  outline: 4px solid #4299e1;
+  outline: 2px solid var(--primary);
   outline-offset: 2px;
-  background: #4299e1;
+  background: var(--primary);
   color: white;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(66, 153, 225, 0.3);
 }
 
 /* Loading Overlay */
@@ -271,7 +274,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(15, 23, 42, 0.95);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -282,8 +285,8 @@
 .loading-spinner {
   width: 40px;
   height: 40px;
-  border: 3px solid #e2e8f0;
-  border-top-color: #4299e1;
+  border: 3px solid var(--panel-border);
+  border-top-color: var(--primary);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
   margin-bottom: 16px;
@@ -296,8 +299,8 @@
 }
 
 .loading-overlay p {
-  color: #4a5568;
-  font-size: 14px;
+  color: var(--text-muted);
+  font-size: 0.9rem;
   font-weight: 500;
 }
 
@@ -329,4 +332,3 @@
     padding: 16px;
   }
 }
-
