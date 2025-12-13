@@ -101,8 +101,8 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(
           }
         }
 
-        window.player = playerRef.current;
-        window.dashjs = dashjs;
+        (window as any).player = playerRef.current;
+        (window as any).dashjs = (window as any).dashjs;
 
         playerRef.current.src({
           type: 'application/dash+xml',
@@ -153,6 +153,7 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(
           playerRef.current.play();
 
           const dashPlayer = playerRef.current.dash.mediaPlayer;
+          const dashjs = (window as any).dashjs;
           dashPlayer.updateSettings({
             debug: {
               logLevel: dashjs.Debug.LOG_LEVEL_DEBUG,
