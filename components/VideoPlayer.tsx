@@ -101,6 +101,9 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(
           }
         }
 
+        window.player = playerRef.current;
+        window.dashjs = dashjs;
+
         playerRef.current.src({
           type: 'application/dash+xml',
           src: url,
@@ -140,9 +143,36 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(
 
         // playerRef.current.load(); // src() triggers load
 
+        const logEvent = (name: string, event: any) => {
+          console.log('DRM EVENT: ' + name, event);
+          addLog('DRM EVENT: ' + name + ' - ' + JSON.stringify(event), 'event');
+        };
+
         playerRef.current.ready(() => {
           addLog('Player ready');
           playerRef.current.play();
+
+          const dashPlayer = playerRef.current.dash.mediaPlayer;
+          dashPlayer.updateSettings({
+            debug: {
+              logLevel: dashjs.Debug.LOG_LEVEL_DEBUG,
+            },
+          });
+
+          const eventsToListen = [
+            // dashjs.Protection.events.KEY_SYSTEM_SELECTED,
+            dashjs.Protection.events.PROTECTION_CREATED,
+            dashjs.Protection.events.KEY_SYSTEM_SELECTED,
+            dashjs.Protection.events.KEY_ADDED,
+            // dashjs.Protection.events.KEY_MESSAGE,
+            dashjs.Protection.events.KEY_ERROR,
+          ];
+
+          for (const eventName of eventsToListen) {
+            dashPlayer.on(eventName, (event: any) => {
+              logEvent(eventName, event);
+            });
+          }
         });
 
         playerRef.current.off('error'); // Remove previous listeners
