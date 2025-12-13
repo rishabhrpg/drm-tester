@@ -88,7 +88,11 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(
         }
 
         if (!playerRef.current) {
-          playerRef.current = videojs(videoRef.current);
+          playerRef.current = videojs(videoRef.current, {
+            html5: {
+              nativeCaptions: false,
+            },
+          });
 
           // Initialize EME only when creating the player
           if (playerRef.current.eme) {
@@ -96,19 +100,6 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(
             console.log('EME plugin initialized');
           }
         }
-
-        const keySystems = {
-          'com.widevine.alpha': {
-            url: licenseData.widevineLicenseServer,
-            httpRequestHeaders: {
-              // Some implementations need Authorization here too
-              // Authorization: `Bearer ${licenseData.authXmlToken}`,
-              // But videojs-contrib-eme often uses keySystemOptions structure below
-            },
-          },
-        };
-
-        console.log('keySystems placeholder:', keySystems);
 
         playerRef.current.src({
           type: 'application/dash+xml',
