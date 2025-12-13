@@ -2,7 +2,10 @@ import axios from 'axios';
 
 // Proxy server configuration - DRM calls are routed through the proxy server
 // In Next.js, we use the relative path to hit the API route
-const DRM_PROXY_ENDPOINT = '/api/drm';
+const proxyServerUrl = process.env.NEXT_PUBLIC_PROXY_SERVER_ENDPOINT || '';
+const DRM_PROXY_ENDPOINT = `${proxyServerUrl}/api/drm`;
+
+console.log('proxyServerUrl', proxyServerUrl);
 
 export interface DrmLicenseData {
   widevineLicenseServer?: string;
@@ -27,7 +30,7 @@ export const getDrmLicense = async (
     // Get subscriber ID from environment variables
     // Note: Next.js uses NEXT_PUBLIC_ prefix for client-side env vars
     const subscriberId = process.env.NEXT_PUBLIC_SUBSCRIBER_ID;
-    
+
     if (!subscriberId) {
       throw new Error(
         'NEXT_PUBLIC_SUBSCRIBER_ID is not set. Please configure it in the .env file.'
@@ -109,4 +112,3 @@ export const isLicenseExpired = (expiresAt: string) => {
   const now = Math.floor(Date.now() / 1000);
   return now >= parseInt(expiresAt);
 };
-
