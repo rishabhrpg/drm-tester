@@ -5,35 +5,50 @@ interface ControlPanelProps {
   onPlayDash: () => void;
   onPlayDrmDash: () => void;
   onShowDrmInfo: () => void;
+  onPlayDrmDashAds: () => void;
   onStop: () => void;
+  onForcePlay?: () => void;
 }
 
-const ControlPanel: React.FC<ControlPanelProps> = ({ 
-  onPlayDash, 
-  onPlayDrmDash, 
+const ControlPanel: React.FC<ControlPanelProps> = ({
+  onPlayDash,
+  onPlayDrmDash,
   onShowDrmInfo,
-  onStop
+  onStop,
+  onPlayDrmDashAds,
+  onForcePlay,
 }) => {
   const [focusedIndex, setFocusedIndex] = useState(0);
   const buttonRefs = useRef<(HTMLButtonElement | HTMLDivElement | null)[]>([]);
 
-  const buttons = useMemo(() => [
-    { id: 'play-dash', label: 'Play DASH Content', action: onPlayDash },
-    { id: 'play-drm-dash', label: 'Play DRM + DASH', action: onPlayDrmDash },
-    { id: 'stop', label: 'Stop Playback', action: onStop },
-    { id: 'drm-info', label: 'DRM Info', action: onShowDrmInfo }
-  ], [onPlayDash, onPlayDrmDash, onStop, onShowDrmInfo]);
+  const buttons = useMemo(
+    () => [
+      { id: 'play-dash', label: 'Play DASH Content', action: onPlayDash },
+      { id: 'play-drm-dash', label: 'Play DRM + DASH', action: onPlayDrmDash },
+      {
+        id: 'play-drm-dash-ads',
+        label: 'Play DRM + DASH + ADS',
+        action: onPlayDrmDashAds,
+      },
+      { id: 'stop', label: 'Stop Playback', action: onStop },
+      { id: 'force-play', label: 'Force Play', action: onForcePlay },
+      { id: 'drm-info', label: 'DRM Info', action: onShowDrmInfo },
+    ],
+    [onPlayDash, onPlayDrmDash, onPlayDrmDashAds, onStop, onShowDrmInfo, onForcePlay]
+  );
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       switch (event.key) {
         case 'ArrowDown':
           event.preventDefault();
-          setFocusedIndex(prev => (prev + 1) % buttons.length);
+          setFocusedIndex((prev) => (prev + 1) % buttons.length);
           break;
         case 'ArrowUp':
           event.preventDefault();
-          setFocusedIndex(prev => (prev - 1 + buttons.length) % buttons.length);
+          setFocusedIndex(
+            (prev) => (prev - 1 + buttons.length) % buttons.length
+          );
           break;
         case 'Enter':
         case ' ':
@@ -75,12 +90,14 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
   };
 
   return (
-    <div className="control-panel">
-      <h1 className="panel-title">Player Controls</h1>
-      
-      <div className="button-group">
+    <div className='control-panel'>
+      <h1 className='panel-title'>Player Controls</h1>
+
+      <div className='button-group'>
         <button
-          ref={el => { buttonRefs.current[0] = el; }}
+          ref={(el) => {
+            buttonRefs.current[0] = el;
+          }}
           className={`btn-primary ${focusedIndex === 0 ? 'focused' : ''}`}
           onClick={() => handleButtonClick(0, onPlayDash)}
         >
@@ -88,7 +105,9 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
         </button>
 
         <button
-          ref={el => { buttonRefs.current[1] = el; }}
+          ref={(el) => {
+            buttonRefs.current[1] = el;
+          }}
           className={`btn-primary ${focusedIndex === 1 ? 'focused' : ''}`}
           onClick={() => handleButtonClick(1, onPlayDrmDash)}
         >
@@ -96,17 +115,41 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
         </button>
 
         <button
-          ref={el => { buttonRefs.current[2] = el; }}
+          ref={(el) => {
+            buttonRefs.current[2] = el;
+          }}
           className={`btn-primary ${focusedIndex === 2 ? 'focused' : ''}`}
-          onClick={() => handleButtonClick(2, onStop)}
+          onClick={() => handleButtonClick(2, onPlayDrmDashAds)}
+        >
+          <span>🎥</span> Play DRM + DASH + ADS
+        </button>
+
+        <button
+          ref={(el) => {
+            buttonRefs.current[3] = el;
+          }}
+          className={`btn-primary ${focusedIndex === 3 ? 'focused' : ''}`}
+          onClick={() => handleButtonClick(3, onStop)}
         >
           <span>⏹️</span> Stop Playback
         </button>
 
         <button
-          ref={el => { buttonRefs.current[3] = el; }}
-          className={`btn-primary ${focusedIndex === 3 ? 'focused' : ''}`}
-          onClick={() => handleButtonClick(3, onShowDrmInfo)}
+          ref={(el) => {
+            buttonRefs.current[4] = el;
+          }}
+          className={`btn-primary ${focusedIndex === 4 ? 'focused' : ''}`}
+          onClick={() => handleButtonClick(4, onForcePlay)}
+        >
+          <span>▶️</span> Force Play
+        </button>
+
+        <button
+          ref={(el) => {
+            buttonRefs.current[5] = el;
+          }}
+          className={`btn-primary ${focusedIndex === 5 ? 'focused' : ''}`}
+          onClick={() => handleButtonClick(5, onShowDrmInfo)}
         >
           <span>🛡️</span> DRM Info
         </button>
@@ -116,4 +159,3 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
 };
 
 export default ControlPanel;
-

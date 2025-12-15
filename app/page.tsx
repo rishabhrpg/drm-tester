@@ -17,6 +17,9 @@ const dashUrl =
 const drmDashUrl =
   'https://d1jgyj8oxjxorp.cloudfront.net/output/watchfolder/Red_Zone/DASH/Red_Zone.mpd';
 
+const drmDashAdsUrl = `
+https://broadpeak.etv.videoready.tv/0ee8b85a85a49346c032f77405ce3676/output/watchfolder/Red_Zone/DASH/Red_Zone.mpd?vid=movie_405189076565&idtype=vaid&is_lat=0&rdid=a7a55ce8-6917-4fdf-894f-804560a29127&customerId=240607082623306&bundleId=vidaa-1.1.0&appName=eVOD&url=https://watch.evod.co.za/details/movie_405189076565`;
+
 export default function Home() {
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [currentUrl, setCurrentUrl] = useState('');
@@ -83,6 +86,42 @@ export default function Home() {
     addLog('Playback stopped and player reset', 'info');
   };
 
+  const forcePlay = () => {
+    try {
+      (window as any).player?.play();
+      addLog('Force play triggered', 'info');
+    } catch (error: any) {
+      addLog(`Force play failed: ${error.message}`, 'error');
+    }
+  };
+
+  const playDrmDashAdsContent = async () => {
+    try {
+      addLog(`Requesting DRM license for ${drmType}...`, 'info');
+      addLog(`Content: Red_Zone.mpd`, 'info');
+
+      const licenseData = await getDrmLicense(drmType);
+      setCurrentUrl(drmDashAdsUrl);
+      setCurrentDrmTech(drmType);
+
+      addLog(`DRM license obtained for ${drmType}`, 'success');
+      addLog(
+        `License Server: ${
+          licenseData.widevineLicenseServer ||
+          licenseData.playReadyLicenseServer
+        }`,
+        'info'
+      );
+      addLog(`Playing DRM-protected content: ${drmDashAdsUrl}`, 'info');
+
+      if (playerRef.current) {
+        playerRef.current.loadDrmContent(drmDashAdsUrl, licenseData, drmType);
+      }
+    } catch (error: any) {
+      addLog(`Failed to get DRM license: ${error.message}`, 'error');
+    }
+  };
+
   // Render DRM Info page
   if (currentPage === 'drm-info') {
     return <DrmInfo onBack={() => setCurrentPage('player')} />;
@@ -96,7 +135,9 @@ export default function Home() {
           <ControlPanel
             onPlayDash={playDashContent}
             onPlayDrmDash={playDrmDashContent}
+            onPlayDrmDashAds={playDrmDashAdsContent}
             onStop={stopPlayback}
+            onForcePlay={forcePlay}
             onShowDrmInfo={() => setCurrentPage('drm-info')}
           />
         </div>
