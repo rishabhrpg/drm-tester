@@ -52,7 +52,7 @@ export default function RootLayout({
           strategy="beforeInteractive" 
         />
         <div className="fixed bottom-2 right-2 text-xs text-green-400 pointer-events-none z-50 font-mono">
-          v0.0.3
+          v0.0.4
         </div>
       </body>
     </html>
