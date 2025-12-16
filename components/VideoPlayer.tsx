@@ -125,8 +125,6 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(
                 httpRequestHeaders: {
                   customdata: `${licenseData.authXmlToken}`,
                 },
-                audioRobustness: 'SW_SECURE_CRYPTO',
-                videoRobustness: 'SW_SECURE_CRYPTO',
                 priority: 2,
               },
             },
